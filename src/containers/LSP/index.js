@@ -3,17 +3,31 @@ import PropTypes from 'prop-types';
 
 import config from '../../config';
 import styles from './styles';
-import { LSPTable } from '../../components';
+import { ContainerTable } from '../../components';
+import { setRole } from '../../actions';
+import { connect } from 'react-redux';
 
 class LSP extends Component {
+
+  constructor(props) {
+    super(props);
+    this.props.setRole("Logistics Service Provider");
+  }
 
   render() {
     return (
       <div style={styles.container}>
-        <LSPTable />
+        <ContainerTable />
       </div>
     );
   }
 }
 
-export default LSP;
+export default connect(
+  user => ({
+    user
+  }),
+  dispatch => ({
+    setRole: role => dispatch(setRole(role))
+  })
+)(LSP);

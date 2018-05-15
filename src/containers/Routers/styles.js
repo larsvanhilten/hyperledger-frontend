@@ -1,7 +1,6 @@
 
 export default {
   main: {
-    fontFamily: "'Roboto', sans-serif",
     height: '100vh',
   },
   container: {
