@@ -13,8 +13,9 @@ import 'normalize.css';
 
 import { store } from './store';
 import { Routers } from './containers';
+import theme from './config/muiTheme'
 
-const muiTheme = getMuiTheme();
+const muiTheme = getMuiTheme(theme);
 const history = syncHistoryWithStore(createBrowserHistory(), store);
 const root = document.getElementById('root');
 

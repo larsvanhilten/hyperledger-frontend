@@ -3,10 +3,14 @@ export default {
   main: {
     fontFamily: "'Roboto', sans-serif",
     height: '100vh',
-    backgroundColor: "blue",
   },
   container: {
     width: '100%',
     height: '100%'
+  },
+  routes: {
+    paddingTop: '64px',
+    width: '100%',
+    height: 'calc(100% - 64px)'
   }
 };
