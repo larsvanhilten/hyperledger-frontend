@@ -29,6 +29,24 @@ class Shipping extends Component {
     });
   };
 
+  selectFile = () => {
+    document.getElementById("attachment").click();
+  }
+
+  fileSelected = (input) => {
+    const file = input.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsText(file, "UTF-8");
+      reader.onload = (evt) => {
+        console.log(evt.target.result);
+      }
+      reader.onerror = (evt) => {
+        console.log("error");
+      }
+    }
+  }
+
   render() {
     return (
       <div style={styles.container}>
@@ -46,7 +64,15 @@ class Shipping extends Component {
             style={{ height: "100%" }}
           >
             <div style={styles.upperContainer}> 
-              <FlatButton label="Add manifest" style={styles.button} />
+              <FlatButton label="Add manifest" style={styles.button} onClick={this.selectFile}> 
+                <input 
+                  type='file'
+                  onChange={this.fileSelected}
+                  style={{ display: "none" }} 
+                  id="attachment" 
+                  accept=".json" 
+                /> 
+              </FlatButton>
             </div>
             <ContainerTable style={{ height: "calc(100% - 246px)", overflow: "auto"}} />   
           </Tab>
