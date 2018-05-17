@@ -6,6 +6,12 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Chip from 'material-ui/Chip';
+import Badge from 'material-ui/Badge';
+import IconButton from 'material-ui/IconButton';
+import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class Navigation extends Component {
   
@@ -17,13 +23,63 @@ class Navigation extends Component {
     super(props);
     this.state = {
       open: false,
+      dialog: false
     };
   }
 
-  render() {
-    const element = <Chip style={styles.chip} labelStyle={styles.chipLabel}>{this.props.user.role}</Chip>;
+  handleDialog = () => {
+    this.setState({
+      dialog: !this.state.dialog
+    });
+  }
+
+  handleSubmit = () => {
+    // handle container request here
+  }
+
+  renderDialog = () => {
+    const actions = [
+      <FlatButton
+        label="Cancel"
+        onClick={this.handleDialog}
+      />,
+      <FlatButton
+        label="Submit"
+        onClick={this.handleSubmit}
+      />,
+    ];
 
     return (
+      <Dialog
+      title="New container request"
+      actions={actions}
+      open={this.state.dialog}
+    >
+      New container request from 'x'
+    </Dialog>
+    );
+  }
+
+  render() {
+    let badge;
+
+    if(this.props.user.role == "Shipper")
+      badge = (
+        <Badge badgeContent={"1"} badgeStyle={styles.badge} onClick={this.handleDialog}> 
+          <NotificationsIcon style={styles.icon} /> 
+       </Badge>
+      );
+
+    const element = (
+      <div style={styles.iconRight}>
+        {badge}
+        <Chip style={styles.chip} labelStyle={styles.chipLabel}>
+          {this.props.user.role}
+        </Chip>
+      </div>
+    );
+
+  return (
       <div>
         <AppBar
           title="Blockchain Shipping Network"
@@ -42,6 +98,8 @@ class Navigation extends Component {
           <MenuItem href="/shipping">Shipping</MenuItem>
           <MenuItem href="/lsp">Logistic Service Provider</MenuItem>
         </Drawer>
+
+        {this.renderDialog()}
       </div>
     );
   }

@@ -1,23 +1,64 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
+import { connect } from 'react-redux';
 import config from '../../config';
 import styles from './styles';
 import { ContainerTable } from '../../components';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import FontIcon from 'material-ui/FontIcon';
+import FlatButton from 'material-ui/FlatButton';
 import { setRole } from '../../actions';
-import { connect } from 'react-redux';
 
 class Shipping extends Component {
 
+  static propTypes = {
+    user: PropTypes.object
+  };
+
   constructor(props) {
     super(props);
-    this.props.setRole("Shipping");
+    this.state = {
+      value: 'containers',
+    };
+    this.props.setRole("Shipper");
   }
+
+  handleChange = (value) => {
+    this.setState({
+      value: value,
+    });
+  };
 
   render() {
     return (
       <div style={styles.container}>
-        <ContainerTable />
+        <Tabs
+          value={this.state.value}
+          onChange={this.handleChange}
+          style={{ position: "fixed", height: "100%"}}
+          contentContainerStyle={{height: "100%"}}
+          tabTemplateStyle={{height: "100%"}}
+        >
+          <Tab 
+            label="Containers" 
+            value="containers"
+            icon={<FontIcon className="material-icons">view_module</FontIcon>}
+            style={{ height: "100%" }}
+          >
+            <div style={styles.upperContainer}> 
+              <FlatButton label="Add manifest" style={styles.button} />
+            </div>
+            <ContainerTable style={{ height: "calc(100% - 246px)", overflow: "auto"}} />   
+          </Tab>
+          <Tab 
+            label="Transactions" 
+            value="transactions"
+            icon={<FontIcon className="material-icons">loop</FontIcon>}
+            style={{ height: "100%" }}
+          >
+            <ContainerTable style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
+          </Tab>
+        </Tabs>      
       </div>
     );
   }

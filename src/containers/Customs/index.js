@@ -27,7 +27,6 @@ class Customs extends Component {
     this.setState({
       value: value,
     });
-    console.log(this.props)
   };
 
   render() {
@@ -61,8 +60,7 @@ class Customs extends Component {
           >
             <ContainerTable style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
           </Tab>
-        </Tabs>
-        
+        </Tabs>      
       </div>
     );
   }
