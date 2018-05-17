@@ -10,8 +10,6 @@ export default {
   chip: {
     backgroundColor: colors.yellow,
     textTransform: "uppercase",
-    marginTop: "15%",
-    marginLeft: "-30%"
   },
   chipLabel: {
     color: colors.blue,
@@ -21,9 +19,9 @@ export default {
     display: "inline-flex",
     justifyContent: "space-between",
     height: "80%",
-    marginRight: "25px",
+    padding: "3px",
     cursor: "pointer",
-    alignItems: "stretch"
+    alignItems: "center",
   },
   icon: {
     color: colors.yellow

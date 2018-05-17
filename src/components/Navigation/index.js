@@ -40,11 +40,11 @@ class Navigation extends Component {
   renderDialog = () => {
     const actions = [
       <FlatButton
-        label="Cancel"
+        label="Decline"
         onClick={this.handleDialog}
       />,
       <FlatButton
-        label="Submit"
+        label="Accept"
         onClick={this.handleSubmit}
       />,
     ];
