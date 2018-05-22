@@ -13,7 +13,8 @@ import { setRole } from '../../actions';
 class Customs extends Component {
 
   static propTypes = {
-    user: PropTypes.object
+    user: PropTypes.object,
+    table: PropTypes.object
   };
 
   constructor(props) {
@@ -65,6 +66,52 @@ class Customs extends Component {
     });
   };
 
+  lockContainers = () => {
+    const containers = [];
+    for(let i = 0; i < this.props.table.containers.length; i++) {
+      const index = this.props.table.containers[i];
+      const item = this.state.containers[index];
+      containers.push(`resource:org.acme.shipping.assets.Container#${item.number}`);
+    }
+
+    axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/LockContainer', {
+      $class: "org.acme.shipping.transactions.LockContainer",
+      containers
+    })
+    .then(()  => {
+      this.getContainers()
+      .then(containers => {
+        this.setState({ containers });
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  freeContainers = () => {
+    const containers = [];
+    for(let i = 0; i < this.props.table.containers.length; i++) {
+      const index = this.props.table.containers[i];
+      const item = this.state.containers[index];
+      containers.push(`resource:org.acme.shipping.assets.Container#${item.number}`);
+    }
+
+    axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/FreeContainer', {
+      $class: "org.acme.shipping.transactions.FreeContainer",
+      containers
+    })
+    .then(() => {
+      this.getContainers()
+      .then(containers => {
+        this.setState({ containers });
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
   render() {
     return (
       <div style={styles.container}>
@@ -82,11 +129,11 @@ class Customs extends Component {
             style={{ height: "100%" }}
           >
             <div style={styles.upperContainer}> 
-              <FlatButton label="Lock container(s)" style={styles.button} />
-              <FlatButton label="Free container(s)" style={styles.button} />
+              <FlatButton onClick={this.lockContainers} label="Lock container(s)" style={styles.button} />
+              <FlatButton onClick={this.freeContainers} label="Free container(s)" style={styles.button} />
               <FlatButton label="Start risk analyses" style={styles.button} />
             </div>
-            <ContainerTable items={this.state.containers} style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
+            <ContainerTable type={"containers"} items={this.state.containers} style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
           </Tab>
           <Tab 
             label="Transactions" 
@@ -94,7 +141,7 @@ class Customs extends Component {
             icon={<FontIcon className="material-icons">loop</FontIcon>}
             style={{ height: "100%" }}
           >
-            <ContainerTable items={this.state.requests} style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
+            <ContainerTable type={"transactions"} items={this.state.requests} style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
           </Tab>
         </Tabs>      
       </div>
@@ -103,8 +150,9 @@ class Customs extends Component {
 }
 
 export default connect(
-  user => ({
-    user
+  (user,table) => ({
+    ...user,
+    ...table
   }),
   dispatch => ({
     setRole: role => dispatch(setRole(role))

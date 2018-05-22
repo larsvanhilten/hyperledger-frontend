@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styles from './styles';
+import { connect } from 'react-redux';
+import { setSelected } from '../../actions';
 
 import {
   Table,
@@ -14,7 +16,9 @@ import {
 class ContainerTable extends Component {
 
   static propTypes = {
-    items: PropTypes.array
+    items: PropTypes.array,
+    table: PropTypes.object,
+    type: PropTypes.string
   };
 
   generateHeaders = () => {
@@ -48,17 +52,30 @@ class ContainerTable extends Component {
     return body;
   }
 
+  onSelected = (row) => {
+    let rows = row;
+    if(rows == "all") {
+      rows = [];
+      for(let i = 0; i < this.props.items.length; i++) {
+        rows.push(i);
+      } 
+    }
+
+    this.props.setSelected(rows, this.props.type);
+    
+  }
+
   renderTable = () => {
     const headers = this.generateHeaders();
     const body = this.generateBody();
     return(
-      <Table multiSelectable={true} wrapperStyle={{height: "100%"}} bodyStyle={this.props.style}>
+      <Table multiSelectable={true} onRowSelection={this.onSelected} wrapperStyle={{height: "100%"}} bodyStyle={this.props.style}>
         <TableHeader>
           <TableRow>
             { headers }
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody deselectOnClickaway={false}>
             { body }
         </TableBody>
     </Table>
@@ -74,4 +91,11 @@ class ContainerTable extends Component {
   }
 }
 
-export default ContainerTable;
+export default connect(
+  table => ({
+    table
+  }),
+  dispatch => ({
+    setSelected: (rows, table) => dispatch(setSelected(rows, table))
+  })
+)(ContainerTable);
