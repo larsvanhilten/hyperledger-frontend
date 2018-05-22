@@ -17,97 +17,49 @@ class ContainerTable extends Component {
     items: PropTypes.array
   };
 
+  generateHeaders = () => {
+    const headers = [];
+    if(this.props.items && this.props.items[0]) {
+      Object.keys(this.props.items[0]).map(key => {
+        headers.push(<TableHeaderColumn key={key}>{key}</TableHeaderColumn>);
+      });
+    }
+    headers.shift();
+    return headers;
+  }
+
+  generateBody = () => {
+    const body = [];
+    if(this.props.items) {
+      for(let i = 0; i < this.props.items.length; i++) {
+        const content = this.props.items[i];
+        const rows = [];
+        for(let j = 1; j < Object.keys(content).length; j++) {
+          const key = Object.keys(content)[j];
+          rows.push(<TableRowColumn key={j}>{ content[key] }</TableRowColumn>);
+        }
+        body.push(
+          <TableRow key={i}>
+            {rows}
+          </TableRow>
+        );
+      }
+    }
+    return body;
+  }
+
   renderTable = () => {
+    const headers = this.generateHeaders();
+    const body = this.generateBody();
     return(
       <Table multiSelectable={true} wrapperStyle={{height: "100%"}} bodyStyle={this.props.style}>
         <TableHeader>
           <TableRow>
-            <TableHeaderColumn>ID</TableHeaderColumn>
-            <TableHeaderColumn>Name</TableHeaderColumn>
-            <TableHeaderColumn>Status</TableHeaderColumn>
+            { headers }
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableRowColumn>1</TableRowColumn>
-            <TableRowColumn>John Smith</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>2</TableRowColumn>
-            <TableRowColumn>Randal White</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>3</TableRowColumn>
-            <TableRowColumn>Stephanie Sanders</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>4</TableRowColumn>
-            <TableRowColumn>Steve Brown</TableRowColumn>
-            <TableRowColumn>Employed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>5</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>8</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>9</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
-          <TableRow>
-            <TableRowColumn>9</TableRowColumn>
-            <TableRowColumn>Christopher Nolan</TableRowColumn>
-            <TableRowColumn>Unemployed</TableRowColumn>
-          </TableRow>
+            { body }
         </TableBody>
     </Table>
     )

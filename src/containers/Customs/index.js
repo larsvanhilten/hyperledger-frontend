@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import config from '../../config';
 import styles from './styles';
+import axios from 'axios';
 import { ContainerTable } from '../../components';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import FontIcon from 'material-ui/FontIcon';
@@ -19,8 +20,43 @@ class Customs extends Component {
     super(props);
     this.state = {
       value: 'containers',
+      containers: [],
+      requests: []
     };
-    this.props.setRole("Customs");
+
+    this.props.setRole("Customs");  
+  }
+
+  componentDidMount() {
+    this.getContainers()
+    .then(containers => {
+      this.setState({ containers });
+    });
+
+    this.getRequests()
+    .then(requests => {
+      this.setState({ requests });
+    });
+  }
+
+  getContainers = () => {
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container')
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
+  getRequests = () => {
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request')
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   handleChange = (value) => {
@@ -50,7 +86,7 @@ class Customs extends Component {
               <FlatButton label="Free container(s)" style={styles.button} />
               <FlatButton label="Start risk analyses" style={styles.button} />
             </div>
-            <ContainerTable style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
+            <ContainerTable items={this.state.containers} style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
           </Tab>
           <Tab 
             label="Transactions" 
@@ -58,7 +94,7 @@ class Customs extends Component {
             icon={<FontIcon className="material-icons">loop</FontIcon>}
             style={{ height: "100%" }}
           >
-            <ContainerTable style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
+            <ContainerTable items={this.state.requests} style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
           </Tab>
         </Tabs>      
       </div>

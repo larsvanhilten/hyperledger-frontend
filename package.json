@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "history": "^4.7.2",
     "material-ui": "^0.20.1",
     "normalize.css": "^8.0.0",
