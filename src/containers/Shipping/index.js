@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import config from '../../config';
 import styles from './styles';
 import { ContainerTable } from '../../components';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
-import { setRole } from '../../actions';
-import { TableBody } from 'material-ui';
+import { setRole, setLoader } from '../../actions';
 import axios from 'axios';
 
 class Shipping extends Component {
@@ -80,6 +78,7 @@ class Shipping extends Component {
   }
 
   fileSelected = (input) => {
+    this.props.setLoader(true);
     const file = input.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -95,15 +94,18 @@ class Shipping extends Component {
           this.getContainers()
           .then(containers => {
             this.setState({ containers });
+            this.props.setLoader(false);
           });
         })
         .catch((error) => {
           console.log(error);
+          this.props.setLoader(false);
         });
 
       }
       reader.onerror = () => {
         console.log("error");
+        this.props.setLoader(false);
       }
     }
   }
@@ -157,6 +159,7 @@ export default connect(
     ...table
   }),
   dispatch => ({
-    setRole: role => dispatch(setRole(role))
+    setRole: role => dispatch(setRole(role)),
+    setLoader: isActive => dispatch(setLoader(isActive))
   })
 )(Shipping);

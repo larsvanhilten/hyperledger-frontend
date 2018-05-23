@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styles from './styles';
 import { connect } from 'react-redux';
 import { setSelected } from '../../actions';
 
@@ -25,10 +24,11 @@ class ContainerTable extends Component {
     const headers = [];
     if(this.props.items && this.props.items[0]) {
       Object.keys(this.props.items[0]).map(key => {
-        headers.push(<TableHeaderColumn key={key}>{key}</TableHeaderColumn>);
+        return headers.push(<TableHeaderColumn key={key}>{key}</TableHeaderColumn>);
       });
+      headers.shift();
+      return headers;
     }
-    headers.shift();
     return headers;
   }
 
@@ -54,7 +54,7 @@ class ContainerTable extends Component {
 
   onSelected = (row) => {
     let rows = row;
-    if(rows == "all") {
+    if(rows === "all") {
       rows = [];
       for(let i = 0; i < this.props.items.length; i++) {
         rows.push(i);

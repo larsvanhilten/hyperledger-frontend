@@ -7,11 +7,11 @@ import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
 import Chip from 'material-ui/Chip';
 import Badge from 'material-ui/Badge';
-import IconButton from 'material-ui/IconButton';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
+import CircularProgress from 'material-ui/CircularProgress';
+import {setLoader} from "../../actions";
 import axios from 'axios';
 
 class Navigation extends Component {
@@ -27,16 +27,19 @@ class Navigation extends Component {
       dialog: false,
       requests: []
     };
+    
   }
 
   componentDidMount() {
-    if(!this.props.user.role == "Shipper")
+    if(!this.props.user.role === "Shipper")
       return;
 
     this.getRequests()
     .then(requests => {
       this.setState({ requests });
     });
+
+    
   }
 
   getRequests = () => {
@@ -60,6 +63,7 @@ class Navigation extends Component {
 
   handleRejected = () => {
     this.setState({ dialog: false });
+    this.props.setLoader(true);
 
     const requestID = this.state.requests[0].id;
     const response = "REJECTED";    
@@ -73,15 +77,18 @@ class Navigation extends Component {
       this.getRequests()
       .then(requests => {
         this.setState({ requests });
+        this.props.setLoader(false);
       });
     })
     .catch((error) => {
       console.log(error);
+      this.props.setLoader(false);
     });
   }
 
   handleAccepted = () => {
     this.setState({ dialog: false });
+    this.props.setLoader(true);
 
     const requestID = this.state.requests[0].id;
     const response = "DONE";
@@ -101,25 +108,28 @@ class Navigation extends Component {
         this.getRequests()
         .then(requests => {
           this.setState({ requests });
+          this.props.setLoader(false);
         });
       })
       .catch((error) => {
         console.log(error);
+        this.props.setLoader(false);
       });
     })
     .catch((error) => {
       console.log(error);
+      this.props.setLoader(false);
     });
   }
 
     renderDialog = () => {
     const actions = [
       <FlatButton
-        label="Decline"
+        label="Reject"
         onClick={this.handleRejected}
       />,
       <FlatButton
-        label="Accept"
+        label="Transfer"
         onClick={this.handleAccepted}
       />,
     ];
@@ -133,20 +143,28 @@ class Navigation extends Component {
 
     return (
       <Dialog
-      title="New container request"
+      title="New transfer request"
       actions={actions}
       open={this.state.dialog}
     >
-      New request for container: {container} 	&nbsp;
-      from: {from}
+      New request for container: "{container}" from: "{from}"
     </Dialog>
+    );
+  }
+
+  renderLoader = () => {
+    if(!this.props.user.loader)
+      return;
+
+    return(
+      <CircularProgress style={styles.loader}/>
     );
   }
 
   render() {
     let badge;
 
-    if(this.props.user.role == "Shipper")
+    if(this.props.user.role === "Shipper")
       badge = (
         <Badge badgeContent={this.state.requests.length} badgeStyle={styles.badge} onClick={this.handleDialog}> 
           <NotificationsIcon style={styles.icon} /> 
@@ -182,6 +200,7 @@ class Navigation extends Component {
           <MenuItem href="/lsp">Logistic Service Provider</MenuItem>
         </Drawer>
 
+        {this.renderLoader()}
         {this.renderDialog()}
       </div>
     );
@@ -189,7 +208,10 @@ class Navigation extends Component {
 }
 
 export default connect(
-  user => ({
+  (user) => ({
     user
+  }),
+  dispatch => ({
+    setLoader: isActive => dispatch(setLoader(isActive))
   })
 )(Navigation);

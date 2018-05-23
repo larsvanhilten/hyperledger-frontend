@@ -30,5 +30,11 @@ export default {
     color: colors.yellow,
     backgroundColor: colors.blue,
     border: `1px solid ${colors.yellow}`
+  },
+  loader: {
+    position: "fixed",
+    zIndex: 50,
+    top: "90%",
+    left:" 50%",
   }
 };

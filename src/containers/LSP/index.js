@@ -1,17 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import config from '../../config';
 import styles from './styles';
 import { ContainerTable } from '../../components';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import FontIcon from 'material-ui/FontIcon';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import axios from 'axios';
-import { setRole } from '../../actions';
+import { setRole, setLoader } from '../../actions';
 
 class LSP extends Component {
 
@@ -87,6 +85,7 @@ class LSP extends Component {
   }
 
   handleSubmit = () => {
+    this.props.setLoader(true);
     axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/RequestContainer', {
       $class: "org.acme.shipping.transactions.RequestContainer",
       id: `${this.state.containerID}`,
@@ -97,10 +96,12 @@ class LSP extends Component {
     this.getRequests()
     .then(requests => {
       this.setState({ requests, dialog: false });
+      this.props.setLoader(false);
     });
   })
   .catch((error) => {
     console.log(error);
+    this.props.setLoader(false);
   });
   }
 
@@ -173,6 +174,7 @@ export default connect(
     user
   }),
   dispatch => ({
-    setRole: role => dispatch(setRole(role))
+    setRole: role => dispatch(setRole(role)),
+    setLoader: isActive => dispatch(setLoader(isActive))
   })
 )(LSP);

@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import config from '../../config';
 import styles from './styles';
 import axios from 'axios';
 import { ContainerTable } from '../../components';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import FontIcon from 'material-ui/FontIcon';
 import FlatButton from 'material-ui/FlatButton';
-import { setRole } from '../../actions';
+import { setRole, setLoader } from '../../actions';
 
 class Customs extends Component {
 
@@ -78,6 +77,7 @@ class Customs extends Component {
   };
 
   lockContainers = () => {
+    this.props.setLoader(true);
     const containers = [];
     for(let i = 0; i < this.props.table.containers.length; i++) {
       const index = this.props.table.containers[i];
@@ -93,14 +93,17 @@ class Customs extends Component {
       this.getContainers()
       .then(containers => {
         this.setState({ containers });
+        this.props.setLoader(false);
       });
     })
     .catch((error) => {
       console.log(error);
+      this.props.setLoader(false);
     });
   }
 
   freeContainers = () => {
+    this.props.setLoader(true);
     const containers = [];
     for(let i = 0; i < this.props.table.containers.length; i++) {
       const index = this.props.table.containers[i];
@@ -116,10 +119,12 @@ class Customs extends Component {
       this.getContainers()
       .then(containers => {
         this.setState({ containers });
+        this.props.setLoader(false);
       });
     })
     .catch((error) => {
       console.log(error);
+      this.props.setLoader(false);
     });
   }
 
@@ -166,6 +171,7 @@ export default connect(
     ...table
   }),
   dispatch => ({
-    setRole: role => dispatch(setRole(role))
+    setRole: role => dispatch(setRole(role)),
+    setLoader: isActive => dispatch(setLoader(isActive))
   })
 )(Customs);
