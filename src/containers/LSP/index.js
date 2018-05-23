@@ -78,10 +78,10 @@ class LSP extends Component {
 
   handleSubmit = () => {
     axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/RequestContainer', {
-      "$class": "org.acme.shipping.transactions.RequestContainer",
-      "id": `${this.state.containerID}`,
-      "to": "resource:org.acme.shipping.participants.Company#2336",
-      "container": `resource:org.acme.shipping.assets.Container#${this.state.containerID}`,
+      $class: "org.acme.shipping.transactions.RequestContainer",
+      id: `${this.state.containerID}`,
+      to: "resource:org.acme.shipping.participants.Company#2336",
+      container: `resource:org.acme.shipping.assets.Container#${this.state.containerID}`,
   })
   .then(()  => {
     this.getRequests()

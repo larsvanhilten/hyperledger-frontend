@@ -40,7 +40,7 @@ class Navigation extends Component {
   }
 
   getRequests = () => {
-    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%20%22where%22%3A%7B%20%22and%22%3A%5B%20%7B%20%22to%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%239325%22%7D%2C%20%7B%20%22status%22%3A%20%22IN_PROGRESS%22%20%7D%5D%20%7D%20%7D')
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%20%22where%22%3A%7B%20%22and%22%3A%5B%20%7B%20%22from%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%239325%22%20%7D%2C%20%7B%20%22status%22%3A%20%22IN_PROGRESS%22%20%20%7D%5D%20%7D%20%7D')
     .then(response => {
       return response.data;
     })
@@ -66,6 +66,15 @@ class Navigation extends Component {
 
     const requestID = this.state.requests[0].id;
     const response = isAccepted ? "DONE" : "REJECTED";
+
+    axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/TransferContainer', {
+      $class: "org.acme.shipping.transactions.TransferContainer",
+      container: this.state.requests[0].container,
+      owner:  this.state.requests[0].to,
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
     axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/RespondToRequest', {
       $class: "org.acme.shipping.transactions.RespondToRequest",
@@ -99,7 +108,7 @@ class Navigation extends Component {
     let from, container = "";
 
     if(this.state.requests[0]) {
-      from = this.state.requests[0].from;
+      from = this.state.requests[0].to;
       container = this.state.requests[0].container;
     }
 
