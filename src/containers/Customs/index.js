@@ -41,9 +41,13 @@ class Customs extends Component {
   }
 
   getContainers = () => {
-    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container')
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container?filter=%7B%22include%22%3A%22resolve%22%7D')
     .then(response => {
-      return response.data;
+      const data = response.data;
+      for(let i = 0; i < data.length; i++){
+        data[i].owner = data[i].owner.name;
+      }
+      return data;
     })
     .catch(error => {
       console.log(error);
@@ -51,9 +55,16 @@ class Customs extends Component {
   }
 
   getRequests = () => {
-    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request')
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%22include%22%3A%22resolve%22%7D')
     .then(response => {
-      return response.data;
+      const data = response.data;
+      for(let i = 0; i < data.length; i++){
+        data[i].container = data[i].container.number;
+        data[i].from = data[i].from.name;
+        data[i].to = data[i].to.name;
+      }
+      return data;
+
     })
     .catch(error => {
       console.log(error);

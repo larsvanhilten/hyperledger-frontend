@@ -45,9 +45,13 @@ class LSP extends Component {
   }
 
   getContainers = () => {
-    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container?filter=%7B%20%22where%22%3A%7B%20%22owner%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%20%7D')
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container?filter=%7B%20%22where%22%3A%20%7B%20%22owner%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%2C%20%22include%22%3A%22resolve%22%20%7D')
     .then(response => {
-      return response.data;
+      const data = response.data;
+      for(let i = 0; i < data.length; i++){
+        data[i].owner = data[i].owner.name;
+      }
+      return data;
     })
     .catch(error => {
       console.log(error);
@@ -55,9 +59,15 @@ class LSP extends Component {
   }
   
   getRequests = () => {
-    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%20%22where%22%3A%7B%20%22or%22%3A%5B%20%7B%20%22from%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%2C%20%7B%20%22to%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%20%7D%5D%20%7D%20%7D')
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%20%22where%22%3A%7B%20%22to%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%2C%20%22include%22%3A%22resolve%22%20%7D')
     .then(response => {
-      return response.data;
+      const data = response.data;
+      for(let i = 0; i < data.length; i++){
+        data[i].container = data[i].container.number;
+        data[i].from = data[i].from.name;
+        data[i].to = data[i].to.name;
+      }
+      return data;
     })
     .catch(error => {
       console.log(error);
