@@ -10,6 +10,7 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import axios from 'axios';
 import { setRole } from '../../actions';
 
 class LSP extends Component {
@@ -22,9 +23,45 @@ class LSP extends Component {
     super(props);
     this.state = {
       value: 'containers',
-      dialog: false
+      dialog: false,
+      containerID: "",
+      containers: [],
+      requests: []
     };
     this.props.setRole("Logistic Service Provider");
+  }
+
+
+  componentDidMount() {
+    this.getContainers()
+    .then(containers => {
+      this.setState({ containers });
+    });
+
+    this.getRequests()
+    .then(requests => {
+      this.setState({ requests });
+    });
+  }
+
+  getContainers = () => {
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Container?filter=%7B%20%22where%22%3A%7B%20%22owner%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%20%7D')
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+  
+  getRequests = () => {
+    return axios.get('http://lars01.westeurope.cloudapp.azure.com:3000/api/Request?filter=%7B%20%22where%22%3A%7B%20%22or%22%3A%5B%20%7B%20%22from%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%7D%2C%20%7B%20%22to%22%3A%20%22resource%3Aorg.acme.shipping.participants.Company%232336%22%20%20%7D%5D%20%7D%20%7D')
+    .then(response => {
+      return response.data;
+    })
+    .catch(error => {
+      console.log(error);
+    });
   }
 
   handleChange = (value) => {
@@ -40,7 +77,26 @@ class LSP extends Component {
   }
 
   handleSubmit = () => {
-    // handle container request here
+    axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/RequestContainer', {
+      "$class": "org.acme.shipping.transactions.RequestContainer",
+      "id": `${this.state.containerID}`,
+      "to": "resource:org.acme.shipping.participants.Company#2336",
+      "container": `resource:org.acme.shipping.assets.Container#${this.state.containerID}`,
+  })
+  .then(()  => {
+    this.getRequests()
+    .then(requests => {
+      this.setState({ requests, dialog: false });
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+  }
+
+  handleTextChange = (e) => {
+    const text = e.target.value;
+    this.setState({ containerID: text});
   }
 
   renderDialog = () => {
@@ -61,7 +117,7 @@ class LSP extends Component {
       actions={actions}
       open={this.state.dialog}
     >
-      <TextField hintText="Containernumber" />
+      <TextField onChange={this.handleTextChange} hintText="Containernumber" />
     </Dialog>
     );
   }
@@ -86,7 +142,7 @@ class LSP extends Component {
             <div style={styles.upperContainer}> 
               <FlatButton label="Request container" style={styles.button} onClick={this.handleDialog} />
             </div>
-            <ContainerTable style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
+            <ContainerTable items={this.state.containers} style={{ height: "calc(100% - 246px)", overflow: "auto"}} />
           </Tab>
           <Tab 
             label="Transactions" 
@@ -94,7 +150,7 @@ class LSP extends Component {
             icon={<FontIcon className="material-icons">loop</FontIcon>}
             style={{ height: "100%" }}
           >
-            <ContainerTable style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
+            <ContainerTable items={this.state.requests} style={{ height: "calc(100% - 195px)", overflow: "auto"}} />    
           </Tab>
         </Tabs>      
       </div>
