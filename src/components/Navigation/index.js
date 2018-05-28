@@ -70,6 +70,7 @@ class Navigation extends Component {
 
     axios.post('http://lars01.westeurope.cloudapp.azure.com:3000/api/RespondToRequest', {
       $class: "org.acme.shipping.transactions.RespondToRequest",
+      container: `resource:org.acme.shipping.assets.Container#${this.state.requests[0].container.number}`,
       request: `resource:org.acme.shipping.assets.Request#${requestID}`,
       response
     })
